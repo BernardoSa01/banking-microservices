@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: transaction-service
+
+  jackson:
+    default-property-inclusion: non_null
+
+kafka:
+  topics:
+    approved: transactions-approved
+    rejected: transactions-rejected
+
+server:
+  error:
+    include-message: always
