@@ -1,7 +1,6 @@
 package com.example.transaction_service.kafka;
 
 import com.example.transaction_service.model.TransactionStatus;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
