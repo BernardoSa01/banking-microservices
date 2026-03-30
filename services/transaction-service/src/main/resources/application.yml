@@ -11,5 +11,6 @@ kafka:
     rejected: transactions-rejected
 
 server:
+  port: 8081
   error:
     include-message: always
