@@ -5,6 +5,9 @@ import com.example.statement_service.model.Statement;
 import com.example.statement_service.repository.StatementRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class StatementService {
 
@@ -26,5 +29,17 @@ public class StatementService {
                 .build();
 
         return repository.save(statement);
+    }
+
+    public List<Statement> getStatementsByAccount(String accountId) {
+        return repository.findByAccountIdOrderByTimestampDesc(accountId);
+    }
+
+    public List<Statement> getStatementsByPeriod(
+            String accountId,
+            LocalDateTime start,
+            LocalDateTime end
+    ) {
+        return repository.findByAccountIdAndTimestampBetween(accountId, start, end);
     }
 }
