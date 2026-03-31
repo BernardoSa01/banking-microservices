@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0lcy5k4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.45.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.24.0">
+  <bpmn:process id="transaction-workflow-process" name="Transaction Workflow Process" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1" name="Start Event">
+      <bpmn:outgoing>Flow_1gav3ba</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0tgball" name="End Event">
+      <bpmn:incoming>Flow_0gnorbt</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1gav3ba" sourceRef="StartEvent_1" targetRef="Activity_0prir4v" />
+    <bpmn:sequenceFlow id="Flow_1oi40nl" sourceRef="Activity_0prir4v" targetRef="Activity_019c446" />
+    <bpmn:sequenceFlow id="Flow_0gnorbt" sourceRef="Activity_019c446" targetRef="Event_0tgball" />
+    <bpmn:serviceTask id="Activity_0prir4v" name="Register Statement" camunda:class="com.example.workflow.delegate.RegisterStatementDelegate">
+      <bpmn:incoming>Flow_1gav3ba</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oi40nl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_019c446" name="Publish Notification Event" camunda:class="com.example.workflow.delegate.PublishNotificationEventDelegate">
+      <bpmn:incoming>Flow_1oi40nl</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gnorbt</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="transaction-workflow-process">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="153" y="145" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tgball_di" bpmnElement="Event_0tgball">
+        <dc:Bounds x="1042" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1035" y="145" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0geqi2a_di" bpmnElement="Activity_0prir4v">
+        <dc:Bounds x="390" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ghahkw_di" bpmnElement="Activity_019c446">
+        <dc:Bounds x="690" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1gav3ba_di" bpmnElement="Flow_1gav3ba">
+        <di:waypoint x="198" y="120" />
+        <di:waypoint x="390" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gnorbt_di" bpmnElement="Flow_0gnorbt">
+        <di:waypoint x="790" y="120" />
+        <di:waypoint x="1042" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oi40nl_di" bpmnElement="Flow_1oi40nl">
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="690" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
