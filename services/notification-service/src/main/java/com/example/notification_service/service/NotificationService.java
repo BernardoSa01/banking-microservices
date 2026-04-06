@@ -1,5 +1,6 @@
 package com.example.notification_service.service;
 
+import com.example.notification_service.model.NotificationEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -22,7 +23,7 @@ public class NotificationService {
         return emitter;
     }
 
-    public void send(String accountId, Object event) {
+    public void send(String accountId, NotificationEvent event) {
 
         SseEmitter emitter = emitters.get(accountId);
 
@@ -31,8 +32,23 @@ public class NotificationService {
             return;
         }
 
+        // Converte TransactionType (DEBIT/CREDIT) para português (exibição)
+        String type = event.getType().equals("DEBIT") ? "débito" : "crédito";
+
+        String message = String.format(
+                " Conta %s: Compra aprovada no %s no valor de R$ %,.2f",
+                accountId,
+                type,
+                event.getAmount().doubleValue()
+        );
+
         try {
-            emitter.send(event);
+            //emitter.send(message);
+            emitter.send(
+                    SseEmitter.event()
+                            .name("notification")
+                            .data(message)
+            );
         } catch (Exception e) {
             emitters.remove(accountId);
         }

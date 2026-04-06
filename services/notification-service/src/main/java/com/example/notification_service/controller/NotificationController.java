@@ -18,9 +18,4 @@ public class NotificationController {
     public SseEmitter stream(@RequestParam String accountId) {
         return service.subscribe(accountId);
     }
-
-    @PostMapping("/test")
-    public void test(@RequestParam String accountId) {
-        service.send(accountId, "Test notification");
-    }
 }
