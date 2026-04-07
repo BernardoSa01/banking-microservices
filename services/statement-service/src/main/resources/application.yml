@@ -1,6 +1,9 @@
+server:
+  port: 8083
+
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/banking
-server:
-  port: 8083
+      host: localhost
+      port: 27017
+      database: banking

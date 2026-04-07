@@ -36,6 +36,10 @@ public class RedisAccountBalanceRepository implements AccountBalanceRepository {
     public boolean debit(String accountId, Long amount) {
         Long newBalance = redis.opsForValue().decrement(balanceKey(accountId), amount);
 
+        if (newBalance == null) {
+            throw new IllegalArgumentException("Erro ao acessar saldo no Redis para conta " + accountId);
+        }
+
         if (newBalance < 0) {
             redis.opsForValue().increment(balanceKey(accountId), amount);
             return false;
@@ -47,6 +51,10 @@ public class RedisAccountBalanceRepository implements AccountBalanceRepository {
     @Override
     public boolean consumeCreditLimit(String accountId, Long amount) {
         Long newLimit = redis.opsForValue().decrement(limitKey(accountId), amount);
+
+        if (newLimit == null) {
+            throw new IllegalArgumentException("Erro ao acessar limite no Redis para conta " + accountId);
+        }
 
         if (newLimit < 0) {
             redis.opsForValue().increment(limitKey(accountId), amount);
