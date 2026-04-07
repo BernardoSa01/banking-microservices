@@ -14,6 +14,7 @@ public class NotificationController {
         this.service = service;
     }
 
+    // Endpoint para abertura de terminal SSE
     @GetMapping("/stream")
     public SseEmitter stream(@RequestParam String accountId) {
         return service.subscribe(accountId);

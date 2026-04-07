@@ -4,6 +4,7 @@ import com.example.notification_service.model.NotificationEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,18 +36,25 @@ public class NotificationService {
         // Converte TransactionType (DEBIT/CREDIT) para português (exibição)
         String type = event.getType().equals("DEBIT") ? "débito" : "crédito";
 
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        String date = event.getTimestamp().format(dateFormatter);
+        String time = event.getTimestamp().format(timeFormatter);
+
         String message = String.format(
-                " Conta %s: Compra aprovada no %s no valor de R$ %,.2f",
+                " Conta %s: Compra aprovada no %s no valor de R$ %,.2f em %s às %s",
                 accountId,
                 type,
-                event.getAmount().doubleValue()
+                event.getAmount().doubleValue(),
+                date,
+                time
         );
 
         try {
-            //emitter.send(message);
             emitter.send(
                     SseEmitter.event()
-                            .name("notification")
+                            .name(" notification")
                             .data(message)
             );
         } catch (Exception e) {
