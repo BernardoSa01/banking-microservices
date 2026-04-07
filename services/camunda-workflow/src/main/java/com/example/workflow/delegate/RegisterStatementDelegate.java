@@ -36,13 +36,5 @@ public class RegisterStatementDelegate implements JavaDelegate {
         restTemplate.postForObject(url, request, Void.class);
 
         System.out.println("Statement registered for transaction: " + transactionId);
-
-//        System.out.println("Registering transaction in statement service:");
-//        System.out.println("TransactionId: " + transactionId);
-//        System.out.println("AccountId: " + accountId);
-//        System.out.println("Amount: " + amount);
-//        System.out.println("Type: " + type);
-
-        // chamada statement-service
     }
 }
