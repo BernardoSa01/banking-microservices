@@ -31,10 +31,20 @@ public class RegisterStatementDelegate implements JavaDelegate {
 
         String url = "http://localhost:8083/statements";
 
-        System.out.println("Calling statement-service...");
+        try {
+            System.out.println("Calling statement-service...");
 
-        restTemplate.postForObject(url, request, Void.class);
+            restTemplate.postForObject(url, request, Void.class);
 
-        System.out.println("Statement registered for transaction: " + transactionId);
+            System.out.println("Statement registered for transaction: " + transactionId);
+        } catch (Exception e) {
+
+            System.err.println("Error calling statement-service: " + e.getMessage());
+
+            throw new RuntimeException(
+                    "Failed to register statement for transaction " + transactionId,
+                    e
+            );
+        }
     }
 }
