@@ -10,6 +10,8 @@ import com.example.transaction_service.model.Transaction;
 import com.example.transaction_service.model.TransactionStatus;
 import com.example.transaction_service.model.TransactionType;
 import com.example.transaction_service.repository.AccountBalanceRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import io.micrometer.core.instrument.Counter;
@@ -34,6 +36,9 @@ public class TransactionService {
     private final Counter transactionsRejected;
     private final Counter transactionAmountTotal;
     private final Timer transactionProcessingTimer;
+
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
+
 
     public TransactionService(TransactionMapper transactionMapper,
                               AccountBalanceRepository repository,
@@ -68,6 +73,7 @@ public class TransactionService {
 
     public TransactionResponseDTO processTransaction(TransactionRequestDTO dto) {
 
+
         Timer.Sample sample = Timer.start();
 
         transactionsTotal.increment();
@@ -93,9 +99,19 @@ public class TransactionService {
                 transactionsApproved.increment();
                 transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a débito aprovada.";
+                log.info(
+                        "Transaction approved (DEBIT) - accountId={}, amount={}. Sending event to topic transactions-approved",
+                        transaction.getAccountId(),
+                        transaction.getAmount()
+                );
             } else {
                 transaction.setStatus(TransactionStatus.REJECTED);
                 transactionsRejected.increment();
+                log.info(
+                        "Transaction rejected (DEBIT) - accountId={}, amount={}. Sending event to topic transactions-rejected",
+                        transaction.getAccountId(),
+                        transaction.getAmount()
+                );
                 throw new InsufficientBalanceException(transaction.getAccountId());
             }
 
@@ -111,9 +127,19 @@ public class TransactionService {
                 transactionsApproved.increment();
                 transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a crédito aprovada.";
+                log.info(
+                        "Transaction approved (CREDIT) - accountId={}, amount={}. Sending event to topic transactions-approved",
+                        transaction.getAccountId(),
+                        transaction.getAmount()
+                );
             } else {
                 transaction.setStatus(TransactionStatus.REJECTED);
                 transactionsRejected.increment();
+                log.info(
+                        "Transaction rejected (CREDIT) - accountId={}, amount={}. Sending event to topic transactions-rejected",
+                        transaction.getAccountId(),
+                        transaction.getAmount()
+                );
                 throw new CreditLimitExceededException(transaction.getAccountId());
             }
 
