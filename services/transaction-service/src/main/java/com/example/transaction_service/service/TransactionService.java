@@ -12,6 +12,10 @@ import com.example.transaction_service.model.TransactionType;
 import com.example.transaction_service.repository.AccountBalanceRepository;
 import org.springframework.stereotype.Service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.MeterRegistry;
+
 import com.example.transaction_service.kafka.TransactionEvent;
 import com.example.transaction_service.kafka.TransactionProducer;
 
@@ -25,13 +29,48 @@ public class TransactionService {
     private final AccountBalanceRepository repository;
     private final TransactionProducer transactionProducer;
 
-    public TransactionService(TransactionMapper transactionMapper, AccountBalanceRepository repository, TransactionProducer transactionProducer) {
+    private final Counter transactionsTotal;
+    private final Counter transactionsApproved;
+    private final Counter transactionsRejected;
+    private final Counter transactionAmountTotal;
+    private final Timer transactionProcessingTimer;
+
+    public TransactionService(TransactionMapper transactionMapper,
+                              AccountBalanceRepository repository,
+                              TransactionProducer transactionProducer,
+                              MeterRegistry meterRegistry) {
+
         this.transactionMapper = transactionMapper;
         this.repository = repository;
         this.transactionProducer = transactionProducer;
+
+        this.transactionsTotal = Counter.builder("bank_transactions_total")
+                .description("Total transactions processed")
+                .register(meterRegistry);
+
+        this.transactionsApproved = Counter.builder("bank_transactions_approved_total")
+                .description("Total approved transactions")
+                .register(meterRegistry);
+
+        this.transactionsRejected = Counter.builder("bank_transactions_rejected_total")
+                .description("Total rejected transactions")
+                .register(meterRegistry);
+
+        this.transactionAmountTotal = Counter.builder("bank_transaction_amount_total")
+                .description("Total amount processed")
+                .register(meterRegistry);
+
+        this.transactionProcessingTimer = Timer.builder("transaction_processing_seconds")
+                .description("Transaction processing time")
+                .register(meterRegistry);
     }
 
+
     public TransactionResponseDTO processTransaction(TransactionRequestDTO dto) {
+
+        Timer.Sample sample = Timer.start();
+
+        transactionsTotal.increment();
 
         if (!repository.accountExists(dto.getAccountId())) {
             throw new AccountNotFoundException(dto.getAccountId());
@@ -51,9 +90,12 @@ public class TransactionService {
 
             if (success) {
                 transaction.setStatus(TransactionStatus.APPROVED);
+                transactionsApproved.increment();
+                transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a débito aprovada.";
             } else {
                 transaction.setStatus(TransactionStatus.REJECTED);
+                transactionsRejected.increment();
                 throw new InsufficientBalanceException(transaction.getAccountId());
             }
 
@@ -66,14 +108,18 @@ public class TransactionService {
 
             if (success) {
                 transaction.setStatus(TransactionStatus.APPROVED);
+                transactionsApproved.increment();
+                transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a crédito aprovada.";
             } else {
                 transaction.setStatus(TransactionStatus.REJECTED);
+                transactionsRejected.increment();
                 throw new CreditLimitExceededException(transaction.getAccountId());
             }
 
         } else {
             transaction.setStatus(TransactionStatus.REJECTED);
+            transactionsRejected.increment();
             message = "Invalid transaction type";
         }
 
@@ -100,6 +146,8 @@ public class TransactionService {
         );
 
         transactionProducer.sendTransactionEvent(event);
+
+        sample.stop(transactionProcessingTimer);
 
         return response;
     }
