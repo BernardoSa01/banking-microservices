@@ -1,5 +1,3 @@
-#version: '3'
-
 services:
   redis:
     image: redis:7-alpine
@@ -36,6 +34,23 @@ services:
       MONGO_INITDB_DATABASE: banking
     volumes:
       - mongo-data:/data/db
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
 volumes:
   mongo-data:
   redis-data:
+  grafana-data:
