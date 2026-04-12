@@ -4,6 +4,9 @@ import com.example.notification_service.model.NotificationEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NotificationService {
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Counter notificationsCounter;
+
+    public NotificationService(MeterRegistry meterRegistry) {
+
+        this.notificationsCounter = Counter.builder("bank_notifications_total")
+                .description("Total number of notifications sent")
+                .register(meterRegistry);
+    }
 
     public SseEmitter subscribe(String accountId) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
@@ -57,6 +68,7 @@ public class NotificationService {
                             .name(" notification")
                             .data(message)
             );
+            notificationsCounter.increment();
         } catch (Exception e) {
             emitters.remove(accountId);
         }
