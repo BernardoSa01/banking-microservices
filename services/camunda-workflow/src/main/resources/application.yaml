@@ -1,5 +1,6 @@
 server:
   port: 8082
+  address: 0.0.0.0
 
 spring:
   datasource:
@@ -34,3 +35,11 @@ camunda:
       id: demo
       password: demo
     history-level: full
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
