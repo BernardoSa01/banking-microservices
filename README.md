@@ -174,7 +174,7 @@ Each microservice exposes metrics via:
 These metrics are scraped by **Prometheus** and visualized through **Grafana dashboards**.
 
 <p align="center">
-  <img src="github-images/grafana.png" width="800">
+  <img src="github-images/grafana.png">
 </p>
 
 ### Dashboard Metrics
