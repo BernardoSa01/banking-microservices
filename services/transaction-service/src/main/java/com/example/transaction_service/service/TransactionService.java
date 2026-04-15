@@ -100,15 +100,18 @@ public class TransactionService {
                 transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a débito aprovada.";
                 log.info(
-                        "Transaction approved (DEBIT) - accountId={}, amount={}. Sending event to topic transactions-approved",
+                        "Transaction approved (DEBIT) | transactionId = {} | accountId = {} | amount = {} | Sending event to topic: transactions-approved",
+                        transaction.getId(),
                         transaction.getAccountId(),
                         transaction.getAmount()
+
                 );
             } else {
                 transaction.setStatus(TransactionStatus.REJECTED);
                 transactionsRejected.increment();
                 log.info(
-                        "Transaction rejected (DEBIT) - accountId={}, amount={}. Sending event to topic transactions-rejected",
+                        "Transaction rejected (DEBIT) | transactionId = {} | accountId = {} | amount = {} | Sending event to topic: transactions-rejected",
+                        transaction.getId(),
                         transaction.getAccountId(),
                         transaction.getAmount()
                 );
@@ -128,7 +131,8 @@ public class TransactionService {
                 transactionAmountTotal.increment(transaction.getAmount());
                 message = "Transação a crédito aprovada.";
                 log.info(
-                        "Transaction approved (CREDIT) - accountId={}, amount={}. Sending event to topic transactions-approved",
+                        "Transaction approved (CREDIT) | transactionId = {} | accountId = {} | amount = {} | Sending event to topic: transactions-approved",
+                        transaction.getId(),
                         transaction.getAccountId(),
                         transaction.getAmount()
                 );
@@ -136,9 +140,10 @@ public class TransactionService {
                 transaction.setStatus(TransactionStatus.REJECTED);
                 transactionsRejected.increment();
                 log.info(
-                        "Transaction rejected (CREDIT) - accountId={}, amount={}. Sending event to topic transactions-rejected",
+                        "Transaction rejected (CREDIT) | transactionId = {} | accountId = {} | amount = {} | Sending event to topic: transactions-rejected",
                         transaction.getAccountId(),
-                        transaction.getAmount()
+                        transaction.getAmount(),
+                        transaction.getAccountId()
                 );
                 throw new CreditLimitExceededException(transaction.getAccountId());
             }
