@@ -12,7 +12,6 @@ This project was developed as the final assignment of an **Advanced Java course 
 
 The system follows an **event-driven microservices architecture**.
 
-![System Architecture](github-images/arquitetura.png)
 
 <p align="center">
   <img src="github-images/arquitetura.png" width="800">
@@ -109,7 +108,6 @@ Start → Register Statement → Publish Notification Event → End
 - Call statement-service
 - Publish notification events
 
-![Camunda Workflow](github-images/bpmn.png)
 
 <p align="center">
   <img src="github-images/bpmn.png" width="800">
@@ -136,10 +134,9 @@ GET /statements/pdf
 
 PDF generation is implemented using **OpenPDF**.
 
-![PDF](github-images/extrato.png)
 
 <p align="center">
-  <img src="github-images/extrato.png" width="800">
+  <img src="github-images/extrato.png" width="800" height="550"> 
 </p>
 
 
