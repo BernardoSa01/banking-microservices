@@ -77,17 +77,16 @@ Responsible for processing debit and credit transactions.
 
 ### Kafka topics produced
 
-transactions-approved
-transactions-rejected
+transactions-approved | transactions-rejected
 
 
 ### Metrics
 
-bank_transactions_total
-bank_transactions_approved_total
-bank_transactions_rejected_total
-bank_transaction_amount_total
-transaction_processing_seconds
+- bank_transactions_total 
+- bank_transactions_approved_total
+- bank_transactions_rejected_total
+- bank_transaction_amount_total
+- transaction_processing_seconds
 
 
 ---
